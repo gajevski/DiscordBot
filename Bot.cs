@@ -1,4 +1,5 @@
-﻿using DSharpPlus;
+﻿using DiscordBot.Commands;
+using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.EventArgs;
 using DSharpPlus.Interactivity;
@@ -29,9 +30,10 @@ namespace DiscordBot
 
             var config = new DiscordConfiguration()
             {
+                Intents = DiscordIntents.All,
                 Token = configJson.Token,
                 TokenType = TokenType.Bot,
-                AutoReconnect = true
+                AutoReconnect = true,
             };
 
             Client = new DiscordClient(config);
@@ -45,7 +47,12 @@ namespace DiscordBot
                 StringPrefixes = new string[] { configJson.Prefix },
                 EnableMentionPrefix = true,
                 EnableDms = true,
+                EnableDefaultHelp = false
             };
+
+            Commands = Client.UseCommandsNext(commandsConfig);
+
+            Commands.RegisterCommands<FunCommands>();
 
             await Client.ConnectAsync();
             await Task.Delay(-1);
