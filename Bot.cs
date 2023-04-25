@@ -1,6 +1,8 @@
 ﻿using DSharpPlus;
 using DSharpPlus.CommandsNext;
+using DSharpPlus.EventArgs;
 using DSharpPlus.Interactivity;
+using DSharpPlus.Interactivity.Extensions;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -31,6 +33,27 @@ namespace DiscordBot
                 TokenType = TokenType.Bot,
                 AutoReconnect = true
             };
+
+            Client = new DiscordClient(config);
+            Client.UseInteractivity(new InteractivityConfiguration()
+            {
+                Timeout = TimeSpan.FromMinutes(2)
+            });
+
+            var commandsConfig = new CommandsNextConfiguration()
+            {
+                StringPrefixes = new string[] { configJson.Prefix },
+                EnableMentionPrefix = true,
+                EnableDms = true,
+            };
+
+            await Client.ConnectAsync();
+            await Task.Delay(-1);
+        }
+
+        private Task OnClientReady(ReadyEventArgs events)
+        {
+            return Task.CompletedTask;
         }
     }
 }
